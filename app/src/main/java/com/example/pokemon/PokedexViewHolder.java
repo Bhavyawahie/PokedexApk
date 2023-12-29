@@ -19,7 +19,7 @@ public class PokedexViewHolder extends RecyclerView.ViewHolder {
             Pokemon clickedPokemonItem = (Pokemon) linearLayoutContainer.getTag();
             Intent intent = new Intent(v.getContext(), PokemonInfoChildActivity.class);
             intent.putExtra("name", clickedPokemonItem.getName());
-            intent.putExtra("number", clickedPokemonItem.getUrl());
+            intent.putExtra("url", clickedPokemonItem.getUrl());
 
             v.getContext().startActivity(intent);
         });
