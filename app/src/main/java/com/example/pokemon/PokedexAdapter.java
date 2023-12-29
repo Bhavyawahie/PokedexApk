@@ -1,5 +1,8 @@
 package com.example.pokemon;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
@@ -8,30 +11,62 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PokedexAdapter extends RecyclerView.Adapter<PokedexViewHolder> {
-    List<Pokemon> pokemonList = Arrays.asList(
-            new Pokemon(1, "Pikachu"),
-            new Pokemon(2, "Bulbasaur"),
-            new Pokemon(3, "Jigglypuff"),
-            new Pokemon(4, "Charmander"),
-            new Pokemon(5, "Squirtle"),
-            new Pokemon(6, "Meowth"),
-            new Pokemon(7, "Psyduck"),
-            new Pokemon(8, "Geodude"),
-            new Pokemon(9, "Magnemite"),
-            new Pokemon(10, "Mankey"),
-            new Pokemon(11, "Growlithe"),
-            new Pokemon(12, "Poliwag"),
-            new Pokemon(13, "Abra"),
-            new Pokemon(14, "Machop"),
-            new Pokemon(15, "Bellsprout"),
-            new Pokemon(16, "Tentacool"),
-            new Pokemon(17, "Geodude"),
-            new Pokemon(18, "Ponyta")
-    );
+    private List<Pokemon> pokemonList = new ArrayList<>();
+    private RequestQueue requestQueue;
+
+    PokedexAdapter(Context context) {
+        requestQueue = Volley.newRequestQueue(context);
+        loadPokemon();
+    }
+
+    @SuppressLint("NewApi")
+    private Response.Listener<JSONObject> responseListenerFunction = response -> {
+        try {
+            JSONArray results = response.getJSONArray("results");
+            pokemonList.addAll(IntStream.range(0, results.length()).mapToObj(i -> {
+                try {
+                    return results.getJSONObject(i);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }).map(r -> {
+                try {
+                    return new Pokemon(r.getString("url"), r.getString("name"));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }).collect(Collectors.toList()));
+            notifyDataSetChanged();
+        } catch (JSONException e) {
+            Log.e("API loading error", "Error in JSON response", e);
+        }
+    };
+    private Response.ErrorListener errorListenerFunction = volleyError -> Log.e("API loading error", "Error in Listing data");
+    public void loadPokemon() {
+        String url = "https://pokeapi.co/api/v2/pokemon/?limit=150";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, responseListenerFunction, errorListenerFunction);
+        requestQueue.add(request);
+    }
     @NonNull
     @Override
     public PokedexViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroupParent, int viewType) {

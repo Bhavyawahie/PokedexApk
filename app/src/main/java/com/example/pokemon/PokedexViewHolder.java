@@ -15,16 +15,13 @@ public class PokedexViewHolder extends RecyclerView.ViewHolder {
         super(view);
         linearLayoutContainer = view.findViewById(R.id.pokedex_row);
         textView = view.findViewById(R.id.pokedex_row_text_view);
-        linearLayoutContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Pokemon clickedPokemonItem = (Pokemon) linearLayoutContainer.getTag();
-                Intent intent = new Intent(view.getContext(), PokemonInfoChildActivity.class);
-                intent.putExtra("name", clickedPokemonItem.getName());
-                intent.putExtra("number", clickedPokemonItem.getId());
+        linearLayoutContainer.setOnClickListener(v -> {
+            Pokemon clickedPokemonItem = (Pokemon) linearLayoutContainer.getTag();
+            Intent intent = new Intent(v.getContext(), PokemonInfoChildActivity.class);
+            intent.putExtra("name", clickedPokemonItem.getName());
+            intent.putExtra("number", clickedPokemonItem.getUrl());
 
-                view.getContext().startActivity(intent);
-            }
+            v.getContext().startActivity(intent);
         });
     }
 

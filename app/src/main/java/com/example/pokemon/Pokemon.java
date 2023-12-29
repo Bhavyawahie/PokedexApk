@@ -1,11 +1,11 @@
 package com.example.pokemon;
 
 public class Pokemon {
-    private final int id;
+    private final String url;
     private final String name;
 
-    Pokemon(int id, String name) {
-        this.id = id;
+    Pokemon(String url, String name) {
+        this.url = url;
         this.name = name;
     }
 
@@ -13,7 +13,7 @@ public class Pokemon {
         return name;
     }
 
-    public int getId() {
-        return id;
+    public String getUrl() {
+        return url;
     }
 }
