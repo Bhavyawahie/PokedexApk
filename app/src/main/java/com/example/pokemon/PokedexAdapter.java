@@ -51,7 +51,8 @@ public class PokedexAdapter extends RecyclerView.Adapter<PokedexViewHolder> {
                 }
             }).map(r -> {
                 try {
-                    return new Pokemon(r.getString("url"), r.getString("name"));
+                    String name = r.getString("name").substring(0,1).toUpperCase() + r.getString("name").substring(1);
+                    return new Pokemon(r.getString("url"), name);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
