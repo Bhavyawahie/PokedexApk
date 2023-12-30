@@ -12,6 +12,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class PokemonInfoChildActivity extends AppCompatActivity {
     private TextView pokemonType2;
     private String url;
     private RequestQueue requestQueue;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,8 @@ public class PokemonInfoChildActivity extends AppCompatActivity {
         pokemonUrl = findViewById(R.id.pokemon_url);
         pokemonType1 = findViewById(R.id.pokemon_type1);
         pokemonType2 = findViewById(R.id.pokemon_type2);
+        progressBar = findViewById(R.id.progressBar);
+
 
         //make the get request and load the JSON response
         load();
@@ -62,6 +66,7 @@ public class PokemonInfoChildActivity extends AppCompatActivity {
     @SuppressLint("NewApi")
     private Response.Listener<JSONObject> responseListenerFunction = response -> {
         try {
+            progressBar.setVisibility(View.GONE);
             //added a hyperlink-styling to string
             SpannableString link = new SpannableString(url);
 
@@ -114,6 +119,7 @@ public class PokemonInfoChildActivity extends AppCompatActivity {
     protected void load() {
         pokemonType1.setText("");
         pokemonType2.setText("");
+        progressBar.setVisibility(View.VISIBLE);
         //Creating the request
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, responseListenerFunction, errorListenerFunction);
         //adding the request to queue which will be fired once the load() method is invoked
